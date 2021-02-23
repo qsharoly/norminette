@@ -19,6 +19,11 @@ $config = ParseConfig.new("#{dir}/config.conf")
 
 Bundler.require
 
+class String
+	def red; "\e[38;5;202m#{self}\e[0m" end
+	def green; "\e[38;5;29m#{self}\e[0m" end
+end
+
 class Sender
 	def initialize &block
 		@conn = Bunny.new 	hostname: 	$config['hostname'],
@@ -143,8 +148,9 @@ class Norminette
 	end
 
 	def manage_result result
-		puts "Norme: #{cleanify_path(result['filename'])}" 	if result['filename']
-		puts result['display']	 							if result['display']
+		color = result['display'] ? :red : :green
+		puts "Norme: #{cleanify_path(result['filename'])}".send(color) if result['filename']
+		puts result['display']								if result['display']
 		exit 0 												if result['stop'] == true
 	end
 end
